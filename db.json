@@ -1,0 +1,144 @@
+{
+  "users": [
+    {
+      "id": "c539"
+    },
+    {
+      "id": "dcdb",
+      "fullName": "nva",
+      "username": "nguyễn văn An n ",
+      "email": "admin@fpt.edu.vn",
+      "password": "12345678",
+      "confirmPassword": "12345678"
+    },
+    {
+      "id": "385b",
+      "fullName": "aaa1",
+      "username": "nguyễn văn A",
+      "email": "admin@fpt.edu.vn",
+      "password": "12345678",
+      "confirmPassword": "12345678"
+    },
+    {
+      "id": "a8d2",
+      "fullName": "aaa",
+      "username": "thucminh",
+      "email": "a@gamil.com",
+      "password": "12345678",
+      "confirmPassword": "12345678"
+    },
+    {
+      "id": "b687",
+      "fullName": "aaa",
+      "username": "thucminh",
+      "email": "a@gamil.com",
+      "password": "12345678",
+      "confirmPassword": "12345678"
+    },
+    {
+      "id": "723a",
+      "fullName": "aaa",
+      "username": "thuc2004",
+      "email": "thuc1022004@gmail.com",
+      "password": "12345678",
+      "confirmPassword": "12345678"
+    },
+    {
+      "id": "5490",
+      "account": "thuc",
+      "password": "12345678"
+    },
+    {
+      "id": "7fcd",
+      "fullName": "nguyễn minh thức ",
+      "username": "thuc2004",
+      "email": "a@gamil.com",
+      "password": "12345678",
+      "confirmPassword": "12345678"
+    },
+    {
+      "id": "82fe",
+      "account": "thucminh",
+      "password": "12345678"
+    },
+    {
+      "id": "ac63",
+      "account": "thucminh",
+      "password": "12345678"
+    },
+    {
+      "id": "d637",
+      "fullName": "nguyễn minh thức ",
+      "username": "thucminh",
+      "email": "a@gamil.com",
+      "password": "12345678",
+      "confirmPassword": "12345678"
+    },
+    {
+      "id": "f305",
+      "username": "",
+      "password": "12345678",
+      "account": "thucminh"
+    },
+    {
+      "id": "cb24",
+      "fullName": "nguyễn minh thức ",
+      "username": "thuc123",
+      "email": "a@gamil.com",
+      "password": "12345678",
+      "confirmPassword": "12345678"
+    },
+    {
+      "id": "7b45",
+      "fullName": "aaa",
+      "username": "thucminh",
+      "email": "thuc1022004@gmail.com",
+      "password": "12345678",
+      "confirmPassword": "12345678"
+    },
+    {
+      "id": "92ea",
+      "fullName": "aaa",
+      "username": "thucminh",
+      "email": "a@gamil.com",
+      "password": "12345678",
+      "confirmPassword": "12345678"
+    },
+    {
+      "id": "0fc0",
+      "fullName": "nva",
+      "username": "thucminh",
+      "email": "a@gamil.com",
+      "password": "12345678",
+      "confirmPassword": "12345678"
+    },
+    {
+      "id": "4762",
+      "email": "mthuc982@gamil.com"
+    },
+    {
+      "id": "fb8f",
+      "email": "a@gamil.com"
+    },
+    {
+      "id": "c8c3",
+      "email": "a@gamil.com"
+    },
+    {
+      "id": "050c",
+      "email": "a@gamil.com"
+    },
+    {
+      "id": "62ce",
+      "email": "a@gamil.com"
+    },
+    {
+      "id": "72ab",
+      "email": "a@gamil.com"
+    },
+    {
+      "id": "097c",
+      "email": "a@gamil.com"
+    }
+  ]
+}

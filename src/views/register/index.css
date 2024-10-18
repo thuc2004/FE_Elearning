@@ -1,0 +1,16 @@
+.error-message{
+    font-size: 13px;
+    color: red;
+    animation: fadeDown 0.2s linear;
+}
+
+@keyframes fadeDown {
+    form{
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
