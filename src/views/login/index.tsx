@@ -7,7 +7,7 @@ import axiosInstance from "../../api/axios";
 export const Login: React.FC = () => {
   const navigate = useNavigate(); // Hook dùng để điều hướng
   const [user, setUser] = useState({
-    userName: "",
+    email: "",
     password: "",
   });
 
@@ -55,7 +55,7 @@ export const Login: React.FC = () => {
     e.preventDefault();
 
     // Kiểm tra tính hợp lệ của dữ liệu
-    const usernameValid = validateData("userName", user.userName);
+    const usernameValid = validateData("email", user.email);
     const passwordValid = validateData("password", user.password);
 
     if (usernameValid && passwordValid) {
@@ -72,7 +72,7 @@ export const Login: React.FC = () => {
         } else {
           alert("Đăng nhập thành công!");
           await localStorage.setItem("token", existingUser.data);
-          navigate("/users"); // Điều hướng đến trang người dùng sau khi đăng nhập thành công
+          navigate("/"); // Điều hướng đến trang người dùng sau khi đăng nhập thành công
         }
       } catch (error) {
         console.error("Có lỗi xảy ra khi đăng nhập:", error);
@@ -93,11 +93,11 @@ export const Login: React.FC = () => {
 
         <div className="flex flex-col gap-2">
           <label className="block text-[14px] font-semibold">
-            Tên đăng nhập
+            Email đăng nhập
           </label>
           <Input
             onChange={handleChange}
-            name="userName"
+            name="email"
             placeholder="Tên đăng nhập"
           />
           {usernameError && (
