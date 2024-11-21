@@ -12,7 +12,7 @@ const TopHeader = () => {
             className="text-white hover:text-gray-800 flex items-center"
           >
             <IoNotificationsOutline className="ml-2" />
-            Facebook
+            Thông báo
           </Link>
           <Link
             to="#"

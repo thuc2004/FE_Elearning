@@ -4,7 +4,7 @@ import { IoSearch } from "react-icons/io5";
 interface SearchBarProps {
   searchTerm: string;
   handleSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSearchSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleSearchSubmit: (e: React.ChangeEvent<HTMLFormElement>) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({

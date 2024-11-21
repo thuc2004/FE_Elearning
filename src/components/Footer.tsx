@@ -34,16 +34,16 @@ const Footer: React.FC<SearchBarProps> = ({
           {/* Thanh tìm kiếm bên phải */}
           <form
             onSubmit={handleSearchSubmit}
-            className="relative flex items-center"
+            className="flex-grow max-w-lg relative"
           >
             <input
               type="text"
               placeholder="Tìm kiếm..."
               value={searchTerm}
               onChange={handleSearchChange}
-              className="pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 pr-10"
             />
-            <span className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center justify-center w-7 h-7 bg-blue-500 text-white transition-all rounded-full">
+            <span className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center justify-center w-8 h-8 bg-blue-500 text-white transition-all rounded-full cursor-pointer">
               <IoSearch />
             </span>
           </form>

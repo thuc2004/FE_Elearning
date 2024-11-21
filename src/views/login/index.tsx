@@ -1,144 +1,90 @@
-import React, { useState } from "react";
-import { Input } from "antd";
+import React from "react";
+import { Form, Input, Button, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import "../register/index.css"; // Import file CSS tùy chỉnh
+import "../register/index.css";
 import axiosInstance from "../../api/axios";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
 
 export const Login: React.FC = () => {
-  const navigate = useNavigate(); // Hook dùng để điều hướng
-  const [user, setUser] = useState({
-    email: "",
-    password: "",
-  });
+  const navigate = useNavigate();
 
-  const [usernameError, setUsernameError] = useState(""); // Trạng thái lỗi cho tên đăng nhập
-  const [passwordError, setPasswordError] = useState(""); // Trạng thái lỗi cho mật khẩu
+  const handleSubmit = async (values: { email: string; password: string }) => {
+    try {
+      const response = await axiosInstance.post("/auth/login", values);
+      const existingUser = response.data;
 
-  // Hàm kiểm tra dữ liệu nhập
-  const validateData = (name: string, value: string) => {
-    let isValid = true;
-    switch (name) {
-      case "userName":
-        if (!value) {
-          setUsernameError("Tên đăng nhập không được bỏ trống");
-          isValid = false;
-        } else {
-          setUsernameError(""); // Xóa lỗi nếu hợp lệ
-        }
-        break;
-      case "password":
-        if (!value) {
-          setPasswordError("Mật khẩu không được bỏ trống");
-          isValid = false;
-        } else if (value.length < 8) {
-          setPasswordError("Mật khẩu phải có ít nhất 8 ký tự");
-          isValid = false;
-        } else {
-          setPasswordError(""); // Xóa lỗi nếu hợp lệ
-        }
-        break;
-      default:
-        break;
-    }
-    return isValid;
-  };
-
-  // Hàm xử lý thay đổi dữ liệu nhập
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setUser({ ...user, [name]: value });
-    validateData(name, value); // Kiểm tra dữ liệu khi nhập
-  };
-
-  // Hàm xử lý gửi form đăng nhập
-  const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    // Kiểm tra tính hợp lệ của dữ liệu
-    const usernameValid = validateData("email", user.email);
-    const passwordValid = validateData("password", user.password);
-
-    if (usernameValid && passwordValid) {
-      try {
-        // Gọi API kiểm tra tài khoản dựa trên username
-        const response = await axiosInstance.post("/users/login", user);
-        const existingUser = response.data; // Giả định response trả về danh sách người dùng
-        console.log(existingUser);
-
-        if (!existingUser) {
-          // alert("Tài khoản chưa được đăng ký.");
-        } else if (existingUser.message == "Incorrect password") {
-          alert("Mật khẩu không chính xác.");
-        } else {
-          alert("Đăng nhập thành công!");
-          await localStorage.setItem("token", existingUser.data);
-          navigate("/"); // Điều hướng đến trang người dùng sau khi đăng nhập thành công
-        }
-      } catch (error) {
-        console.error("Có lỗi xảy ra khi đăng nhập:", error);
-        alert("Có lỗi xảy ra, vui lòng thử lại sau.");
+      if (existingUser.message === "Incorrect password") {
+        message.error("Mật khẩu không chính xác.");
+      } else if (!existingUser) {
+        message.warning("Tài khoản chưa được đăng ký.");
+      } else {
+        message.success("Đăng nhập thành công!");
+        await localStorage.setItem("token", existingUser.data);
+        navigate("/");
       }
+    } catch (error) {
+      console.error("Có lỗi xảy ra khi đăng nhập:", error);
+      message.error("Có lỗi xảy ra, vui lòng thử lại sau.");
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <form
-        onSubmit={handleSubmit}
-        className="w-[500px] border px-2 py-5 rounded shadow-md flex flex-col gap-[12px]"
+    <div className="flex justify-center items-center h-screen bg-gray-100">
+      <Form
+        name="login-form"
+        onFinish={handleSubmit}
+        className="w-[500px] border px-4 py-6 rounded shadow-md bg-white flex flex-col gap-4"
       >
         <h3 className="text-center text-[20px] font-semibold uppercase">
           Đăng nhập
         </h3>
 
-        <div className="flex flex-col gap-2">
-          <label className="block text-[14px] font-semibold">
-            Email đăng nhập
-          </label>
-          <Input
-            onChange={handleChange}
-            name="email"
-            placeholder="Tên đăng nhập"
-          />
-          {usernameError && (
-            <span className="error-message text-red-500">{usernameError}</span>
-          )}
-        </div>
+        <Form.Item
+          label="Email đăng nhập"
+          name="email"
+          rules={[
+            { required: true, message: "Vui lòng nhập email" },
+            { type: "email", message: "Email không hợp lệ" },
+          ]}
+          className="flex flex-col gap-1"
+          labelCol={{ span: 24 }}
+          wrapperCol={{ span: 24 }}
+        >
+          <Input placeholder="Nhập email" prefix={<UserOutlined />} />
+        </Form.Item>
 
-        <div className="flex flex-col gap-2">
-          <label className="block text-[14px] font-semibold">Mật khẩu</label>
-          <Input
-            onChange={handleChange}
-            name="password"
+        <Form.Item
+          label="Mật khẩu"
+          name="password"
+          rules={[
+            { required: true, message: "Vui lòng nhập mật khẩu" },
+            { min: 8, message: "Mật khẩu phải có ít nhất 8 ký tự" },
+          ]}
+          className="flex flex-col gap-1"
+          labelCol={{ span: 24 }}
+          wrapperCol={{ span: 24 }}
+        >
+          <Input.Password
             placeholder="Nhập mật khẩu"
-            type="password"
+            prefix={<LockOutlined />}
           />
-          {passwordError && (
-            <span className="error-message text-red-500">{passwordError}</span>
-          )}
-        </div>
+        </Form.Item>
 
-        <div className="flex justify-between items-center">
-          <label className="flex items-center">
-            <input type="checkbox" className="mr-2" />
-            Ghi nhớ mật khẩu
-          </label>
-          <Link
-            to="/forgot-password"
-            className="text-blue-500 hover:underline ml-4"
-          >
+        <Form.Item className="flex justify-between items-center mb-2">
+          <Link to="/forgot-password" className="text-blue-500 hover:underline">
             Quên mật khẩu?
           </Link>
-        </div>
+        </Form.Item>
 
-        <div>
-          <button
-            type="submit"
-            className="w-full py-3 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="w-full py-3 bg-blue-500 rounded-md hover:bg-blue-600"
           >
             Đăng nhập
-          </button>
-        </div>
+          </Button>
+        </Form.Item>
 
         <div className="text-center text-[14px]">
           <span>Bạn chưa có tài khoản? </span>
@@ -146,7 +92,7 @@ export const Login: React.FC = () => {
             Đăng ký
           </Link>
         </div>
-      </form>
+      </Form>
     </div>
   );
 };

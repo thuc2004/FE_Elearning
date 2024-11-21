@@ -1,22 +1,26 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-
-// Import các component con
-import TopHeader from "../components/Products/TopHeader";
-import NavLinks from "../components/Products/NavLinks";
-import SearchBar from "../components/Products/SearchBar";
-import AccountButtons from "../components/Products/AccountButtons";
-// import Banner from "./header/banner";
+// import {
+//   IoHelpCircleOutline,
+//   IoNotificationsOutline,
+//   IoSearch,
+// } from "react-icons/io5";
+// import { IoPersonOutline } from "react-icons/io5";
+// import { LiaShoppingBagSolid } from "react-icons/lia";
+// import { Badge } from "antd";
+import NavLinks from "./Products/NavLinks";
+import SearchBar from "./Products/SearchBar";
+import AccountButtons from "./Products/AccountButtons";
+import TopHeader from "./Products/TopHeader";
 
 const Navbar: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
-  // Kiểu dữ liệu cho sự kiện thay đổi của ô tìm kiếm
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchTerm(e.target.value);
   };
 
-  // Kiểu dữ liệu cho sự kiện submit form tìm kiếm
   const handleSearchSubmit = (e: React.ChangeEvent<HTMLFormElement>): void => {
     e.preventDefault();
     console.log("Tìm kiếm:", searchTerm);
@@ -24,33 +28,58 @@ const Navbar: React.FC = () => {
 
   return (
     <div>
-      {/* Header nhỏ trên */}
       <TopHeader />
-
-      {/* Thanh điều hướng chính */}
-      <div className="bg-white flex justify-between items-center py-3 shadow-md">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="logo">
-            <Link to="/" className="header__logo">
+      <div className="bg-white shadow-md">
+        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+          {/* Logo */}
+          <div className="flex items-center">
+            <Link to="/home" className="header__logo">
               <img
                 src="1.png"
                 alt="Logo"
-                className="w-40 h-20" // Điều chỉnh kích thước logo
+                className="w-24 h-16 md:w-32 md:h-20"
               />
             </Link>
           </div>
 
-          {/* Liên kết điều hướng */}
-          <NavLinks />
+          {/* Hamburger Menu Icon (Mobile) */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="text-gray-500 hover:text-gray-700 focus:outline-none"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
+          </div>
 
-          {/* Thanh tìm kiếm và các nút */}
-          <div className="flex items-center space-x-11">
-            <SearchBar
-              searchTerm={searchTerm}
-              handleSearchChange={handleSearchChange}
-              handleSearchSubmit={handleSearchSubmit}
-            />
-            <AccountButtons />
+          {/* Navigation Menu */}
+          <div
+            className={`${
+              isMenuOpen ? "flex" : "hidden"
+            } flex-col md:flex md:flex-row w-full md:w-auto mt-4 md:mt-0 space-y-4 md:space-y-0 md:space-x-8`}
+          >
+            <NavLinks />
+            <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
+              <SearchBar
+                searchTerm={searchTerm}
+                handleSearchChange={handleSearchChange}
+                handleSearchSubmit={handleSearchSubmit}
+              />
+              <AccountButtons />
+            </div>
           </div>
         </div>
       </div>

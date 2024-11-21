@@ -1,11 +1,10 @@
 import React from "react";
 import Navbar from "../components/Navbar";
-// import Shop from "../components/shop";
+import { Outlet } from "react-router-dom";
 import Footer from "../components/Footer";
 import FooterText from "../components/FooterText";
-import { Outlet } from "react-router-dom";
 
-const LayoutWebsite = () => {
+const LayoutPrivate = () => {
   return (
     <div>
       <Navbar />
@@ -21,4 +20,4 @@ const LayoutWebsite = () => {
   );
 };
 
-export default LayoutWebsite;
+export default LayoutPrivate;
