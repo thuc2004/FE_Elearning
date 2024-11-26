@@ -4,12 +4,15 @@ import { ShopOutlined } from "@ant-design/icons";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { APIProduct } from "../services/APIProduct";
 import { APIProductVariant } from "../services/APIProductVariant";
+import { APICart } from "../services/APICart";
 
 const { Title, Text } = Typography;
 
 const ProductDetail = () => {
+  
   const navigate = useNavigate();
   const param = useParams();
+  const [cartId,setCartId] = useState()
   const [productVariant, setProductVariant] = useState(null);
   const [products, setProducts] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -17,20 +20,31 @@ const ProductDetail = () => {
   const [color, setColor] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
-
+  
+  useEffect(() => {
+    async function fetchAPI() {
+      const cartId = await APICart.getCartByUserId();
+      console.log(cartId);
+      setCartId(cartId.id)
+    }
+    fetchAPI();
+  }, []);
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const productData = await APIProduct.getProductById(param.productId);
         const productVariantData =
           await APIProductVariant.getProductVariantById(param.id);
-        const productVariant = productVariantData.data;
+
         setProducts(productData.data);
-        setProductVariant(productVariant);
-        setSize(productVariant.size?.name || null);
-        setColor(productVariant.color?.name || null);
+        setProductVariant(productVariantData.data);
+
+        // Lấy thông tin kích thước và màu sắc mặc định
+        const defaultVariant = productVariantData.data;
+        setSize(defaultVariant.size?.name || null);
+        setColor(defaultVariant.color?.name || null);
         setSelectedImage(
-          productVariant.images?.[1]?.url || productVariant.images?.[0]?.url
+          defaultVariant.images?.[1]?.url || defaultVariant.images?.[0]?.url
         );
       } catch (error) {
         console.error("Failed to fetch product data:", error);
@@ -54,8 +68,8 @@ const ProductDetail = () => {
         <Breadcrumb.Item>
           <Link to="/shop">Cửa hàng</Link>
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Quần áo</Breadcrumb.Item>
-        <Breadcrumb.Item>Võ phục Vovinam</Breadcrumb.Item>
+        <Breadcrumb.Item>{products?.category || "Danh mục"}</Breadcrumb.Item>
+        <Breadcrumb.Item>{products?.name}</Breadcrumb.Item>
       </Breadcrumb>
 
       <div
@@ -110,36 +124,17 @@ const ProductDetail = () => {
           {/* Thông tin sản phẩm */}
           <Col span={12} style={{ padding: "20px" }}>
             <Title level={3}>{products?.name}</Title>
-            {/* <div>
-              <Text type="secondary">Ngành hàng: </Text>
-              <Text strong>Fighter Việt Nam</Text>
-            </div> */}
             <div style={{ marginBottom: "20px" }}>
               <Text
                 style={{ color: "red", fontSize: "25px", fontWeight: "bold" }}
               >
                 245.000đ
               </Text>
-              {/* <Text
-                delete
-                style={{ color: "gray", fontSize: "15px", marginLeft: "8px" }}
-              >
-                340.000đ
-              </Text>
-              <Text
-                style={{
-                  color: "red",
-                  fontSize: "12px",
-                  marginLeft: "8px",
-                  background: "#edd8d9",
-                }}
-              >
-                Giảm 15%
-              </Text> */}
             </div>
 
             <Divider />
 
+            {/* Số lượng */}
             <div style={{ marginBottom: "20px" }}>
               <Text style={{ marginRight: "80px" }}>Số lượng</Text>
               <Space>
@@ -151,53 +146,43 @@ const ProductDetail = () => {
               </Space>
             </div>
 
-            {products?.productVariants?.map((product) => {
-              console.log(product);
+            {/* Kích thước */}
+            <div style={{ marginBottom: "20px" }}>
+              <Text style={{ marginRight: "70px" }}>Kích thước</Text>
+              <Space>
+                {products?.productVariants?.map((variant) => (
+                  <Button
+                    key={variant?.size?.id}
+                    type={size === variant?.size?.name ? "primary" : "default"}
+                    onClick={() => setSize(variant?.size?.name)}
+                  >
+                    {variant?.size?.name}
+                  </Button>
+                ))}
+              </Space>
+            </div>
 
-              return (
-                <>
-                  <div style={{ marginBottom: "20px" }}>
-                    <Text style={{ marginRight: "70px" }}>Kích thước</Text>
-                    <Space>
-                      <Button
-                        key={product?.color?.id}
-                        type={
-                          size === product?.color?.name ? "primary" : "default"
-                        }
-                        onClick={() => setSize(product?.color?.name)}
-                      >
-                        {product?.color?.name}
-                      </Button>
-                    </Space>
-                  </div>
-                </>
-              );
-            })}
-            {products?.productVariants?.map((product) => {
-              console.log(product);
-
-              return (
-                <>
-                  <div style={{ marginBottom: "20px" }}>
-                    <Text style={{ marginRight: "85px" }}>Màu sắc</Text>
-                    <Space>
-                      <Button
-                        key={product?.size?.id}
-                        type={
-                          color === product?.size?.name ? "primary" : "default"
-                        }
-                        onClick={() => setColor(product?.size?.name)}
-                      >
-                        {product?.size?.name}
-                      </Button>
-                    </Space>
-                  </div>
-                </>
-              );
-            })}
+            {/* Màu sắc */}
+            <div style={{ marginBottom: "20px" }}>
+              <Text style={{ marginRight: "85px" }}>Màu sắc</Text>
+              <Space>
+                {products?.productVariants?.map((variant) => (
+                  <Button
+                    key={variant?.color?.id}
+                    type={
+                      color === variant?.color?.name ? "primary" : "default"
+                    }
+                    onClick={() => setColor(variant?.color?.name)}
+                  >
+                    {variant?.color?.name}
+                  </Button>
+                ))}
+              </Space>
+            </div>
 
             <Divider />
 
+            {/* Nút hành động */}
             <Space>
               <Button
                 type="primary"
@@ -208,7 +193,7 @@ const ProductDetail = () => {
               <Button
                 type="primary"
                 style={{ backgroundColor: "green", borderColor: "green" }}
-                onClick={() => navigate("/shopping")}
+                onClick={() => navigate(`/cart/${cartId}`)}
               >
                 <ShopOutlined />
                 Mua ngay

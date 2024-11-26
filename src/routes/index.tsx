@@ -12,11 +12,11 @@ import Logout from "../views/login/logout";
 import PrivateRoute from "../routes/privateRoute";
 import LayoutPrivate from "../views/layoutPrivate";
 import HomePage from "../components/homePage";
-import ShoppingCarts from "../pages/(dashboard)/carts/ShoppingCarts";
 import ProductCatalog from "../pages/(dashboard)/carts/ProductCatalog";
 import Order from "../pages/(dashboard)/carts/Order";
 import Address from "../pages/(dashboard)/carts/Address";
 import ProductDetail from "../components/DetailProduct";
+import ShoppingCarts from "../pages/(dashboard)/carts/ShoppingCarts";
 // import File_image from "../views/login/file_image";
 
 const Router = () => {
@@ -27,9 +27,9 @@ const Router = () => {
           <Route path="" element={<Home />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="logout" element={<Logout />} />
-          <Route path="/shopping" element={<ShoppingCarts />} />
+          <Route path="/cart/:cartId" element={<ShoppingCarts />} />
           <Route path="/product" element={<ProductCatalog />} />
-          <Route path="/order" element={<Order />} />
+          <Route path="/order/:orderId" element={<Order />} />
           <Route path="/address" element={<Address />} />
           {/* <Route path="users" element={<User />} /> */}
           <Route

@@ -7,12 +7,12 @@ import MenuShop from "../layout/MenuShop";
 // import img6 from "../assets/img/8.png";
 import { APIProduct } from "../services/APIProduct";
 import ListHeader from "./Products/ListHeader";
+import formatCurrency from "../util/formatCurrency";
 
 interface Product {
   id: string; // hoặc string, tuỳ vào kiểu id của bạn
-  productVariants?: { images?: { url: string }[]; id: string }[];
+  productVariants?: { images?: { url: string }[]; id: string; price: string }[];
   name: string;
-  price: number;
 }
 
 const Shop = () => {
@@ -32,57 +32,6 @@ const Shop = () => {
     <div>
       <ListHeader />
       <div className=" grid grid-cols-5 md:grid-cols-3 lg:grid-cols-5 gap-y-5 gap-x-10 p-5 max-w-7xl mx-auto">
-        {/* <MenuShop
-          img={img1}
-          title={"Vợt Đá Đôi Fighter | Taekwondo, Võ Cổ Truyền, Vovinam"}
-          number={"243.000 đ"}
-        />
-        <MenuShop
-          img={img2}
-          title={"Vợt Đá Đôi Fighter | Taekwondo, Võ Cổ Truyền, Vovinam"}
-          number={"243.000 đ"}
-        />
-        <MenuShop
-          img={img3}
-          title={"Vợt Đá Đôi Fighter | Taekwondo, Võ Cổ Truyền, Vovinam"}
-          number={"243.000 đ"}
-        />
-        <MenuShop
-          img={img4}
-          title={"Vợt Đá Đôi Fighter | Taekwondo, Võ Cổ Truyền, Vovinam"}
-          number={"243.000 đ"}
-        />
-        <MenuShop
-          img={img5}
-          title={"Vợt Đá Đôi Fighter | Taekwondo, Võ Cổ Truyền, Vovinam"}
-          number={"243.000 đ"}
-        /> */}
-
-        {/* <MenuShop
-          img={img5}
-          title={"Vợt Đá Đôi Fighter | Taekwondo, Võ Cổ Truyền, Vovinam"}
-          number={"243.000 đ"}
-        />
-        <MenuShop
-          img={img5}
-          title={"Vợt Đá Đôi Fighter | Taekwondo, Võ Cổ Truyền, Vovinam"}
-          number={"243.000 đ"}
-        />
-        <MenuShop
-          img={img5}
-          title={"Vợt Đá Đôi Fighter | Taekwondo, Võ Cổ Truyền, Vovinam"}
-          number={"243.000 đ"}
-        />
-        <MenuShop
-          img={img5}
-          title={"Vợt Đá Đôi Fighter | Taekwondo, Võ Cổ Truyền, Vovinam"}
-          number={"243.000 đ"}
-        />
-        <MenuShop
-          img={img5}
-          title={"Vợt Đá Đôi Fighter | Taekwondo, Võ Cổ Truyền, Vovinam"}
-          number={"243.000 đ"}
-        /> */}
         {products.map((product: Product) => {
           return (
             <MenuShop
@@ -90,11 +39,11 @@ const Shop = () => {
               idVariant={product.productVariants?.[0]?.id}
               idProduct={product.id}
               img={
-                product.productVariants?.[0]?.images?.[1].url ||
+                product.productVariants?.[0]?.images?.[0]?.url ||
                 "/default-image.png"
               }
               title={product.name}
-              number={String(product.price)}
+              number={formatCurrency(product.productVariants?.[0]?.price)}
             />
           );
         })}
@@ -105,30 +54,6 @@ const Shop = () => {
         <p className="text-black text-sm">
           Sản phẩm chất lượng với giá tốt nhất
         </p>
-      </div>
-
-      <div className=" grid grid-cols-5 md:grid-cols-3 lg:grid-cols-5 gap-y-5 gap-x-10 p-5 max-w-7xl mx-auto">
-        {/* <MenuShop img={img6} />
-        <MenuShop
-          img={img2}
-          title={"Vợt Đá Đôi Fighter | Taekwondo, Võ Cổ Truyền, Vovinam"}
-          number={"243.000 đ"}
-        />
-        <MenuShop
-          img={img3}
-          title={"Vợt Đá Đôi Fighter | Taekwondo, Võ Cổ Truyền, Vovinam"}
-          number={"243.000 đ"}
-        />
-        <MenuShop
-          img={img4}
-          title={"Vợt Đá Đôi Fighter | Taekwondo, Võ Cổ Truyền, Vovinam"}
-          number={"243.000 đ"}
-        />
-        <MenuShop
-          img={img5}
-          title={"Vợt Đá Đôi Fighter | Taekwondo, Võ Cổ Truyền, Vovinam"}
-          number={"243.000 đ"}
-        /> */}
       </div>
 
       <div className="gap-y-5 gap-x-10 p-5 max-w-7xl mx-auto">
