@@ -19,12 +19,13 @@ export default function Register() {
     }
 
     try {
-      const response = await axiosInstance.post("/users/create-user", values);
+      const response = await axiosInstance.post("/auth/create-user", values);
+      console.log(response);
 
       // Kiểm tra nếu `response.data` tồn tại
-      if (response && response.data) {
+      if (response) {
         message.success("Đăng ký thành công!");
-        navigate("/login");
+        navigate(`/confirm-code?email=${values.email}`);
       } else {
         throw new Error("Dữ liệu trả về không hợp lệ.");
       }
