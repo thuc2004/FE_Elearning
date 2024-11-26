@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Row,
   Col,
@@ -14,15 +14,51 @@ import {
   Input,
   Form,
   Select,
+  message,
 } from "antd";
 import { BankOutlined } from "@ant-design/icons";
+import { useParams } from "react-router-dom";
+import { APIOrder } from "../../../services/APIOrder";
 
 const { Text, Title } = Typography;
 const { Option } = Select;
+interface Product {
+  name: string;
+  price: number;
+  quantity: number;
+  imageUrl: string;
+}
 
 const Order = () => {
+  const param = useParams();
+  console.log(param.orderId);
+  const [products, setProducts] = useState<Product[]>();
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const fetchedCart = await APIOrder.getOrderById(param?.orderId);
+        const productsItem: Product[] = fetchedCart?.orderItems?.map(
+          (item: any) => ({
+            name: item.product.product.name,
+            price: item.price,
+            quantity: item.amount,
+            imageUrl: item.product.images[0].url,
+          })
+        );
+        console.log(fetchedCart);
+        setProducts(productsItem);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        // setLoading(false);
+      }
+    };
+
+    fetchCart();
+  }, []);
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>("visa");
+  console.log("🚀 ~ Order ~ selectedPaymentMethod:", selectedPaymentMethod);
   const [includeVAT, setIncludeVAT] = useState<boolean>(false);
   const [addressModalVisible, setAddressModalVisible] =
     useState<boolean>(false);
@@ -32,51 +68,8 @@ const Order = () => {
   const [form] = Form.useForm();
 
   // Dữ liệu sản phẩm với giá và số lượng
-  const products = [
-    {
-      name: "Sản phẩm 1",
-      price: 10000,
-      quantity: 1,
-      imageUrl:
-        "https://cdn.icon-icons.com/icons2/674/PNG/512/Mastercard_icon-icons.com_60554.png",
-    },
-    {
-      name: "Sản phẩm 2",
-      price: 10000,
-      quantity: 1,
-      imageUrl:
-        "https://cdn.icon-icons.com/icons2/674/PNG/512/Mastercard_icon-icons.com_60554.png",
-    },
-  ];
 
   const addresses = [
-    {
-      name: "Nguyễn Văn A",
-      phone: "0321 654 987",
-      district: "Quận Hoàn Kiếm",
-      ward: "Phường Bạch Đằng",
-      address: "Số 9, ngõ 4, Duy Tân, Cầu Giấy, Hà Nội",
-      addressType: "Nhà riêng",
-      isDefault: true,
-    },
-    {
-      name: "Nguyễn Văn B",
-      phone: "0321 654 987",
-      district: "Quận Hoàn Kiếm",
-      ward: "Phường Bạch Đằng",
-      address: "Số 10, ngõ 5, Duy Tân, Cầu Giấy, Hà Nội",
-      addressType: "Nhà riêng",
-      isDefault: true,
-    },
-    {
-      name: "Nguyễn Văn C",
-      phone: "0321 654 987",
-      district: "Quận Hoàn Kiếm",
-      ward: "Phường Bạch Đằng",
-      address: "Số 11, ngõ 6, Duy Tân, Cầu Giấy, Hà Nội",
-      addressType: "Nhà riêng",
-      isDefault: true,
-    },
     {
       name: "Nguyễn Văn D",
       phone: "0321 654 987",
@@ -89,7 +82,7 @@ const Order = () => {
   ];
 
   // Tính tổng tiền sản phẩm
-  const totalProductPrice = products.reduce(
+  const totalProductPrice = products?.reduce(
     (total, product) => total + product.price * product.quantity,
     0
   );
@@ -104,6 +97,13 @@ const Order = () => {
       addresses[selectedAddress] = values;
       setEditingAddress(null);
     });
+  };
+
+  const handlePayment = async (selectedPaymentMethod) => {
+    if (selectedPaymentMethod === "QR") {
+      const QRcode = await APIOrder.getQRcode(param?.orderId);
+      console.log("🚀 ~ handlePayment ~ QRcode:", QRcode);
+    }
   };
 
   return (
@@ -271,6 +271,17 @@ const Order = () => {
                     textAlign: "center",
                   }}
                 >
+                  <Radio value="QR" />
+                </div>
+                <div
+                  style={{
+                    border: "1px solid #d9d9d9",
+                    borderRadius: "8px",
+                    padding: "15px",
+                    flex: 1,
+                    textAlign: "center",
+                  }}
+                >
                   <Radio value="visa">
                     <div className="flex items-center">
                       <img
@@ -327,12 +338,13 @@ const Order = () => {
               </Space>
             </Radio.Group>
           </Card>
+          <Card title="Thanh toán bằng QR" style={{ marginTop: 16 }}></Card>
         </Col>
 
         <Col span={8}>
           <Card title="Sản phẩm">
             <Space direction="vertical" style={{ width: "100%" }}>
-              {products.map((product, index) => (
+              {products?.map((product, index) => (
                 <Row justify="space-between" key={index}>
                   <Col span={8}>
                     <img
@@ -368,7 +380,7 @@ const Order = () => {
                   <Text strong>Tổng tiền hàng</Text>
                 </Col>
                 <Col>
-                  <Text strong>{totalProductPrice.toLocaleString()} đ</Text>
+                  <Text strong>{totalProductPrice?.toLocaleString()} đ</Text>
                 </Col>
               </Row>
 
@@ -379,7 +391,7 @@ const Order = () => {
                     <Text strong>Tổng tiền thanh toán</Text>
                   </Col>
                   <Col>
-                    <Text strong>{totalProductPrice.toLocaleString()} đ</Text>
+                    <Text strong>{totalProductPrice?.toLocaleString()} đ</Text>
                   </Col>
                 </Row>
 
@@ -414,6 +426,7 @@ const Order = () => {
               type="primary"
               size="large"
               style={{ marginTop: 10, width: "100%" }}
+              onClick={() => handlePayment(selectedPaymentMethod)}
             >
               Đặt mua
             </Button>
