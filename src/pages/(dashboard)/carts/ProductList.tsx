@@ -11,6 +11,7 @@ interface Product {
   }
 
 interface ProductListProps {
+  cart:object;
   products: Product[];
   onCheckboxChange: (id: string, checked: boolean) => void;
   onQuantityDecreaseChange: (id: string, delta: number) => void;
@@ -19,6 +20,7 @@ interface ProductListProps {
 }
 
 const ProductList: React.FC<ProductListProps> = ({
+  cart,
   products,
   onCheckboxChange,
   onQuantityDecreaseChange,
@@ -30,6 +32,7 @@ const ProductList: React.FC<ProductListProps> = ({
       {products.map((product) => (
         <ProductItem
           key={product.id}
+          cart={cart}
           product={product}
           onCheckboxChange={onCheckboxChange}
           onQuantityDecreaseChange={onQuantityDecreaseChange}

@@ -20,7 +20,7 @@ const AccountButtons: React.FC = () => {
       {/* Nút "Giỏ hàng" */}
       <div>
         <Link
-          to="/shopping"
+          to="/shop"
           className="flex items-center justify-center w-10 h-10 border-2 border-gray-400 bg-white text-black hover:text-gray-400 rounded-full relative"
         >
           <Badge count={4} offset={[10, -5]} color="red">
