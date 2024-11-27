@@ -15,6 +15,7 @@ interface Product {
 }
 
 interface ProductItemProps {
+  cart: object;
   product: Product;
   onCheckboxChange: (id: string, checked: boolean) => void;
   onQuantityDecreaseChange: (id: string, delta: number) => void;
@@ -23,6 +24,7 @@ interface ProductItemProps {
 }
 
 const ProductItem: React.FC<ProductItemProps> = ({
+  cart,
   product,
   onCheckboxChange,
   onQuantityDecreaseChange,
@@ -35,7 +37,7 @@ const ProductItem: React.FC<ProductItemProps> = ({
     <div className="flex items-center justify-between py-4 border-b">
       <Checkbox
         checked={product.choosen}
-        onChange={(e) => onCheckboxChange(product.id, e.target.checked)}
+        onChange={(e) => onCheckboxChange(cart,product.id, e.target.checked)}
       />
       <div className="flex items-center gap-4">
         <img
@@ -47,15 +49,15 @@ const ProductItem: React.FC<ProductItemProps> = ({
       </div>
       <Text>{formatCurrency(product.price)}</Text>
       <div className="flex items-center gap-2">
-        <Button onClick={() => onQuantityDecreaseChange(product.id, 1)}>-</Button>
+        <Button onClick={() => onQuantityDecreaseChange(cart,product.id, 1)}>-</Button>
         <Input value={product.amount} readOnly className="w-12 text-center" />
-        <Button onClick={() => onQuantityIncreaseChange(product.id, 1)}>+</Button>
+        <Button onClick={() => onQuantityIncreaseChange(cart,product.id, 1)}>+</Button>
       </div>
       <Text>{formatCurrency(product.price * product.amount)}</Text>
       <Button
         type="link"
         icon={<DeleteOutlined />}
-        onClick={() => onRemoveProduct(product.id)}
+        onClick={() => onRemoveProduct(cart,product.id)}
         className="text-red-500"
       >
         Xóa

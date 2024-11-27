@@ -40,8 +40,8 @@ const ShoppingCarts: React.FC = () => {
   }, []);
 
   const handleCheckboxChange = useCallback(
-    async (id: string, checked: boolean) => {
-      console.log(id);
+    async (cart:object,id: string, checked: boolean) => {
+      console.log(id, cart);
 
       // Cập nhật trạng thái sản phẩm trong UI trước
       setProducts((prevProducts) =>
@@ -97,7 +97,7 @@ const ShoppingCarts: React.FC = () => {
   }, []);
 
   const handleQuantityDecreaseChange = useCallback(
-    async (id: string, delta: number) => {
+    async (cart:object,id: string, delta: number) => {
       setProducts((prevProducts) =>
         prevProducts.map((product) =>
           product.id === id
@@ -122,7 +122,7 @@ const ShoppingCarts: React.FC = () => {
   );
 
   const handleQuantityIncreaseChange = useCallback(
-    async (id: string, delta: number) => {
+    async (cart:object,id: string, delta: number) => {
       setProducts((prevProducts) =>
         prevProducts.map((product) =>
           product.id === id
@@ -147,7 +147,7 @@ const ShoppingCarts: React.FC = () => {
   );
 
   const handleRemoveProduct = useCallback(
-    async (id: string) => {
+    async (cart:object,id: string) => {
       try {
         await APICart.removeProductFromCart(cart?.id, id);
         setProducts((prevProducts) =>
@@ -181,6 +181,7 @@ const ShoppingCarts: React.FC = () => {
             totalProducts={products.length}
           />
           <ProductList
+            cart={cart}
             products={products}
             onCheckboxChange={handleCheckboxChange}
             onQuantityDecreaseChange={handleQuantityDecreaseChange}

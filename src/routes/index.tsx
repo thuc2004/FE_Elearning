@@ -18,6 +18,7 @@ import Address from "../pages/(dashboard)/carts/Address";
 import ProductDetail from "../components/DetailProduct";
 import BankPaymentQR from "../pages/(dashboard)/carts/BankPaymentQR";
 import ShoppingCarts from "../pages/(dashboard)/carts/ShoppingCarts";
+import LearningVideo from "../components/Course/LearningVideo/LearningVideo";
 import OTPVerification from "../views/register/Otp";
 // import File_image from "../views/login/file_image";
 
@@ -40,6 +41,7 @@ const Router = () => {
             path="/:productId/detail/:id"
             element={<ProductDetail />}
           />{" "}
+          <Route path="/learning-course" element={<LearningVideo />} />
           {/*chi tiết sp */}
           {/* <Route path="band" element={<Band />} /> */}
           <Route path="forgot-password" element={<ForgotPassword />} />

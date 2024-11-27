@@ -15,13 +15,14 @@ import { APIProduct } from "../services/APIProduct";
 import { APIProductVariant } from "../services/APIProductVariant";
 import { APICart } from "../services/APICart";
 import formatCurrency from "../util/formatCurrency";
+import { APIOrderItem } from "../services/APIOrderItem";
 
 const { Title, Text } = Typography;
 
 const ProductDetail = () => {
   const navigate = useNavigate();
   const param = useParams();
-  const [cartId, setCartId] = useState();
+  const [cart, setCart] = useState();
   const [variantId, setVariantId] = useState(param?.id);
   const [productVariant, setProductVariant] = useState(null);
   const [products, setProducts] = useState(null);
@@ -30,24 +31,29 @@ const ProductDetail = () => {
   const [color, setColor] = useState();
   const [selectedImage, setSelectedImage] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAPI = async () => {
+      setLoading(true); // Bắt đầu tải dữ liệu
       try {
-        const cartId = await APICart.getCartByUserId();
-        if (cartId === 404) {
-          setCartId(undefined);
+        const cart = await APICart.getCartByUserId();
+        console.log("🚀 ~ fetchAPI ~ cartId:", cart);
+        if (cart === 404) {
+          setCart(undefined);
         } else {
-          setCartId(cartId.id);
+          setCart(cart);
         }
       } catch (error) {
         console.error("Error fetching cart:", error);
-        setCartId(undefined); // Xử lý mặc định nếu lỗi xảy ra
+        setCart(undefined); // Xử lý mặc định nếu lỗi xảy ra
+      } finally {
+        setLoading(false); // Hoàn thành tải dữ liệu
       }
     };
 
     fetchAPI();
-  }, []);
+  }, []); // Chỉ gọi 1 lần khi component mount
 
   useEffect(() => {
     const fetchProduct = async (variantId: unknown) => {
@@ -71,21 +77,47 @@ const ProductDetail = () => {
         );
       } catch (error) {
         console.error("Failed to fetch product data:", error);
+      } finally {
+        console.log("hoàn thành");
       }
     };
 
-    fetchProduct(variantId);
-  }, [variantId, param.productId]);
+    if (variantId) {
+      fetchProduct(variantId);
+    }
+  }, [variantId, param.productId]); // Gọi lại khi variantId hoặc productId thay đổi
 
-  const handleClickBuy = async (cartId: unknown) => {
-    if (!cartId) {
-      const newCart = await APICart.addToCart({
-        productId: variantId,
-        amount: quantity,
-        price: productVariant.price,
-      });
+  if (loading) {
+    return <div>Loading...</div>; // Hiển thị thông báo khi đang tải dữ liệu
+  }
+
+  const handleClickBuy = async (cart: unknown) => {
+    console.log("🚀 ~ handleClickBuy ~ cartId:", cart);
+    const orderItem = {
+      productId: variantId,
+      amount: quantity,
+      price: productVariant.price,
+    };
+    if (!cart) {
+      const newCart = await APICart.addCart(orderItem);
       console.log(newCart);
       navigate(`/cart/${newCart?.id}`);
+    } else {
+      const orderItemExist = cart?.orderItems?.filter((variant: object) => {
+        return variant?.productId === variantId;
+      });
+      if (orderItemExist) {
+        console.log("tồn tại", orderItemExist);
+        await APICart.increaseItemQuantity(cart?.id, {
+          productId: orderItemExist[0]?.id,
+          amount: quantity,
+        });
+      } else {
+        const newOrderItem = await APIOrderItem.createOrderItem(orderItem);
+        if (newOrderItem?.status === 201) navigate(`/cart/${cart?.id}`);
+        else console.log(newOrderItem?.data);
+      }
+      navigate(`/cart/${cart?.id}`);
     }
   };
 
@@ -270,7 +302,7 @@ const ProductDetail = () => {
               <Button
                 type="primary"
                 style={{ backgroundColor: "green", borderColor: "green" }}
-                onClick={() => handleClickBuy(cartId)}
+                onClick={() => handleClickBuy(cart)}
               >
                 <ShopOutlined />
                 Mua ngay
