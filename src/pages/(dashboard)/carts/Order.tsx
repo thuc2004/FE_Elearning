@@ -14,7 +14,6 @@ import {
   Input,
   Form,
   Select,
-  message,
 } from "antd";
 import { BankOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
@@ -62,6 +61,7 @@ const Order = () => {
   const [includeVAT, setIncludeVAT] = useState<boolean>(false);
   const [addressModalVisible, setAddressModalVisible] =
     useState<boolean>(false);
+  const [qrModalVisible, setQrModalVisible] = useState<boolean>(false); // Trạng thái hiển thị QR modal
   const [selectedAddress, setSelectedAddress] = useState<number>(0);
   const [editingAddress, setEditingAddress] = useState<number | null>(null);
 
@@ -86,6 +86,13 @@ const Order = () => {
     (total, product) => total + product.price * product.quantity,
     0
   );
+
+  // Dữ liệu QR code
+  const qrCodeData = JSON.stringify({
+    totalPrice: totalProductPrice,
+    method: selectedPaymentMethod,
+    address: addresses[selectedAddress].address,
+  });
 
   const handleUpdateAddress = (index: number) => {
     setEditingAddress(index);
@@ -433,6 +440,28 @@ const Order = () => {
           </div>
         </Col>
       </Row>
+
+      <Modal
+        title="Thanh toán bằng mã QR"
+        visible={qrModalVisible}
+        onCancel={() => setQrModalVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setQrModalVisible(false)}>
+            Đóng
+          </Button>,
+        ]}
+      >
+        <div style={{ textAlign: "center" }}>
+          <QRCode
+            value={qrCodeData} // Dữ liệu QR
+            size={200} // Kích thước QR
+            level="H" // Chất lượng
+          />
+          <div style={{ marginTop: 20 }}>
+            <Text strong>Quét mã QR để thanh toán</Text>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

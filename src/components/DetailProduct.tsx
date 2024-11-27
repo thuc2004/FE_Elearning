@@ -1,48 +1,71 @@
 import React, { useEffect, useState } from "react";
-import { Button, Divider, Row, Col, Typography, Space, Breadcrumb } from "antd";
+import {
+  Button,
+  Divider,
+  Row,
+  Col,
+  Typography,
+  Space,
+  Breadcrumb,
+  Alert,
+} from "antd";
 import { ShopOutlined } from "@ant-design/icons";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { APIProduct } from "../services/APIProduct";
 import { APIProductVariant } from "../services/APIProductVariant";
 import { APICart } from "../services/APICart";
+import formatCurrency from "../util/formatCurrency";
 
 const { Title, Text } = Typography;
 
 const ProductDetail = () => {
-  
   const navigate = useNavigate();
   const param = useParams();
-  const [cartId,setCartId] = useState()
+  const [cartId, setCartId] = useState();
+  const [variantId, setVariantId] = useState(param?.id);
   const [productVariant, setProductVariant] = useState(null);
   const [products, setProducts] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const [size, setSize] = useState(null);
-  const [color, setColor] = useState(null);
+  const [size, setSize] = useState();
+  const [color, setColor] = useState();
   const [selectedImage, setSelectedImage] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
-  
+
   useEffect(() => {
-    async function fetchAPI() {
-      const cartId = await APICart.getCartByUserId();
-      console.log(cartId);
-      setCartId(cartId.id)
-    }
+    const fetchAPI = async () => {
+      try {
+        const cartId = await APICart.getCartByUserId();
+        if (cartId === 404) {
+          setCartId(undefined);
+        } else {
+          setCartId(cartId.id);
+        }
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+        setCartId(undefined); // Xử lý mặc định nếu lỗi xảy ra
+      }
+    };
+
     fetchAPI();
   }, []);
+
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchProduct = async (variantId: unknown) => {
       try {
         const productData = await APIProduct.getProductById(param.productId);
         const productVariantData =
-          await APIProductVariant.getProductVariantById(param.id);
+          await APIProductVariant.getProductVariantById(variantId);
+        console.log(productVariantData);
 
         setProducts(productData.data);
         setProductVariant(productVariantData.data);
 
         // Lấy thông tin kích thước và màu sắc mặc định
         const defaultVariant = productVariantData.data;
-        setSize(defaultVariant.size?.name || null);
-        setColor(defaultVariant.color?.name || null);
+        console.log(defaultVariant);
+
+        setSize(defaultVariant.sizeId || null);
+        setColor(defaultVariant.colorId || null);
         setSelectedImage(
           defaultVariant.images?.[1]?.url || defaultVariant.images?.[0]?.url
         );
@@ -51,8 +74,48 @@ const ProductDetail = () => {
       }
     };
 
-    fetchProduct();
-  }, [param.productId, param.id]);
+    fetchProduct(variantId);
+  }, [variantId, param.productId]);
+
+  const handleClickBuy = async (cartId: unknown) => {
+    if (!cartId) {
+      const newCart = await APICart.addToCart({
+        productId: variantId,
+        amount: quantity,
+        price: productVariant.price,
+      });
+      console.log(newCart);
+      navigate(`/cart/${newCart?.id}`);
+    }
+  };
+
+  const handleChangeColor = async (color: string, size: string) => {
+    const variantId = products?.productVariants?.filter((product) => {
+      return product.color.id === color && product.size.id === size;
+    });
+    console.log(variantId);
+
+    if (!variantId.length) {
+      alert("Variant not eexist");
+    } else {
+      setColor(color);
+      setVariantId(variantId[0].id);
+    }
+  };
+
+  const handleChangeSize = async (size: string, color: string) => {
+    const variantId = products?.productVariants?.filter((product) => {
+      return product.color.id === color && product.size.id === size;
+    });
+    console.log(variantId);
+
+    if (!variantId.length) {
+      alert("Variant not eexist");
+    } else {
+      setSize(size);
+      setVariantId(variantId[0].id);
+    }
+  };
 
   const toggleExpand = () => setIsExpanded(!isExpanded);
 
@@ -128,7 +191,7 @@ const ProductDetail = () => {
               <Text
                 style={{ color: "red", fontSize: "25px", fontWeight: "bold" }}
               >
-                245.000đ
+                {formatCurrency(productVariant?.price)}
               </Text>
             </div>
 
@@ -150,15 +213,21 @@ const ProductDetail = () => {
             <div style={{ marginBottom: "20px" }}>
               <Text style={{ marginRight: "70px" }}>Kích thước</Text>
               <Space>
-                {products?.productVariants?.map((variant) => (
-                  <Button
-                    key={variant?.size?.id}
-                    type={size === variant?.size?.name ? "primary" : "default"}
-                    onClick={() => setSize(variant?.size?.name)}
-                  >
-                    {variant?.size?.name}
-                  </Button>
-                ))}
+                {products?.productVariants
+                  ?.filter(
+                    (variant, index, self) =>
+                      index ===
+                      self.findIndex((v) => v.size.id === variant.size.id)
+                  )
+                  ?.map((variant) => (
+                    <Button
+                      key={variant?.size?.id}
+                      type={size === variant?.size?.id ? "primary" : "default"}
+                      onClick={() => handleChangeSize(variant?.size?.id, color)}
+                    >
+                      {variant?.size?.name}
+                    </Button>
+                  ))}
               </Space>
             </div>
 
@@ -166,17 +235,25 @@ const ProductDetail = () => {
             <div style={{ marginBottom: "20px" }}>
               <Text style={{ marginRight: "85px" }}>Màu sắc</Text>
               <Space>
-                {products?.productVariants?.map((variant) => (
-                  <Button
-                    key={variant?.color?.id}
-                    type={
-                      color === variant?.color?.name ? "primary" : "default"
-                    }
-                    onClick={() => setColor(variant?.color?.name)}
-                  >
-                    {variant?.color?.name}
-                  </Button>
-                ))}
+                {products?.productVariants
+                  ?.filter(
+                    (variant, index, self) =>
+                      index ===
+                      self.findIndex((v) => v.color.id === variant.color.id)
+                  )
+                  ?.map((variant) => (
+                    <Button
+                      key={variant?.color?.id}
+                      type={
+                        color === variant?.color?.id ? "primary" : "default"
+                      }
+                      onClick={() =>
+                        handleChangeColor(variant?.color?.id, size)
+                      }
+                    >
+                      {variant?.color?.name}
+                    </Button>
+                  ))}
               </Space>
             </div>
 
@@ -193,7 +270,7 @@ const ProductDetail = () => {
               <Button
                 type="primary"
                 style={{ backgroundColor: "green", borderColor: "green" }}
-                onClick={() => navigate(`/cart/${cartId}`)}
+                onClick={() => handleClickBuy(cartId)}
               >
                 <ShopOutlined />
                 Mua ngay

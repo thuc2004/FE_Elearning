@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 const AccountButtons: React.FC = () => {
   return (
-    <div className="flex flex-wrap items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8">
+    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
       {/* Nút "Mua sắm" */}
       <div>
         <Link
