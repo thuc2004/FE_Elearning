@@ -20,6 +20,13 @@ import BankPaymentQR from "../pages/(dashboard)/carts/BankPaymentQR";
 import ShoppingCarts from "../pages/(dashboard)/carts/ShoppingCarts";
 import LearningVideo from "../components/Course/LearningVideo/LearningVideo";
 import OTPVerification from "../views/register/Otp";
+import PaymentSuccessModal from "../pages/(dashboard)/order/PaymentSuccess";
+import PaymentFailed from "../pages/(dashboard)/order/PaymentFailed";
+import NoProduct from "../pages/(dashboard)/order/NoProduct";
+import PersonalInfoPage from "../pages/user/PersonalInfoPage";
+import PersonalInfo from "../pages/user/Information/PersonalInfo";
+import ContactInfo from "../pages/user/Information/ContactInfo";
+import Password from "../pages/user/Information/Password";
 // import File_image from "../views/login/file_image";
 
 const Router = () => {
@@ -36,7 +43,19 @@ const Router = () => {
           <Route path="/address" element={<Address />} />
           <Route path="/bank" element={<BankPaymentQR />} />
           <Route path="/confirm-code" element={<OTPVerification />} />
+          <Route path="/payment" element={<PaymentSuccessModal />} />
+          <Route path="/failed" element={<PaymentFailed />} />
+          <Route path="/no" element={<NoProduct />} />
+          <Route path="/" element={<PersonalInfoPage />} />
+          {/* <Route path="/info" element={<PersonalInfo />} /> */}
           {/* <Route path="users" element={<User />} /> */}
+          <Route path="/" element={<PersonalInfoPage />}>
+            <Route path="info" element={<PersonalInfo />} />
+            <Route path="contact-info" element={<ContactInfo />} />
+            <Route path="change-password" element={<Password />} />
+            {/* Các route khác */}
+          </Route>
+          <Route element={<PrivateRoute />}></Route>
           <Route
             path="/:productId/detail/:id"
             element={<ProductDetail />}
