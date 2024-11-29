@@ -61,7 +61,7 @@ const Order = () => {
   const [includeVAT, setIncludeVAT] = useState<boolean>(false);
   const [addressModalVisible, setAddressModalVisible] =
     useState<boolean>(false);
-  const [qrModalVisible, setQrModalVisible] = useState<boolean>(false); // Trạng thái hiển thị QR modal
+  // const [qrModalVisible, setQrModalVisible] = useState<boolean>(false); // Trạng thái hiển thị QR modal
   const [selectedAddress, setSelectedAddress] = useState<number>(0);
   const [editingAddress, setEditingAddress] = useState<number | null>(null);
 
@@ -87,12 +87,12 @@ const Order = () => {
     0
   );
 
-  // Dữ liệu QR code
-  const qrCodeData = JSON.stringify({
-    totalPrice: totalProductPrice,
-    method: selectedPaymentMethod,
-    address: addresses[selectedAddress].address,
-  });
+  // // Dữ liệu QR code
+  // const qrCodeData = JSON.stringify({
+  //   totalPrice: totalProductPrice,
+  //   method: selectedPaymentMethod,
+  //   address: addresses[selectedAddress].address,
+  // });
 
   const handleUpdateAddress = (index: number) => {
     setEditingAddress(index);
@@ -106,12 +106,12 @@ const Order = () => {
     });
   };
 
-  const handlePayment = async (selectedPaymentMethod) => {
-    if (selectedPaymentMethod === "QR") {
-      const QRcode = await APIOrder.getQRcode(param?.orderId);
-      console.log("🚀 ~ handlePayment ~ QRcode:", QRcode);
-    }
-  };
+  // const handlePayment = async (selectedPaymentMethod) => {
+  //   if (selectedPaymentMethod === "QR") {
+  //     const QRcode = await APIOrder.getQRcode(param?.orderId);
+  //     console.log("🚀 ~ handlePayment ~ QRcode:", QRcode);
+  //   }
+  // };
 
   return (
     <div style={{ padding: "20px", maxWidth: "1300px", margin: "auto" }}>
@@ -441,7 +441,7 @@ const Order = () => {
         </Col>
       </Row>
 
-      <Modal
+      {/* <Modal
         title="Thanh toán bằng mã QR"
         visible={qrModalVisible}
         onCancel={() => setQrModalVisible(false)}
@@ -461,7 +461,7 @@ const Order = () => {
             <Text strong>Quét mã QR để thanh toán</Text>
           </div>
         </div>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };
